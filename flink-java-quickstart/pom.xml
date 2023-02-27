@@ -18,13 +18,11 @@
         <scala.binary.version>2.12</scala.binary.version>
         <target.java.version>1.8</target.java.version>
         <scala.version>2.12.15</scala.version>
-        <log4j.version>2.12.1</log4j.version>
+        <slf4j.version>1.7.36</slf4j.version>
         <hadoop.version>2.7.5</hadoop.version>
         <flink.jdbc.version>1.10.3</flink.jdbc.version>
         <hutool.version>5.8.12</hutool.version>
         <mysql.connector.version>5.1.47</mysql.connector.version>
-        <log4j.version>1.2.17</log4j.version>
-        <log4j.core.version>2.12.1</log4j.core.version>
         <lombok.version>1.18.20</lombok.version>
     </properties>
 
@@ -89,21 +87,15 @@
 
         <!--日志-->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.core.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.15</version>
+            <version>${slf4j.version}</version>
         </dependency>
-
     </dependencies>
 
     <!--打包插件 多个依赖打到同一个jar(jar-with-dependencies)-->

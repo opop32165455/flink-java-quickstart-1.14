@@ -13,12 +13,13 @@ import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsIni
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 
 /**
- * todo IDEA启动main方法时 需要勾选IDE的provided选项 增加-local local到启动参数
+ * consumer kafka and producer kafka demo
+ * todo IDEA run main方法时 need [add IDEA provided选项 ] AND [add -local local to program argument]
  *
  * @author zhangxuecheng4441
  * @date 2023/3/13/013 9:40
  */
-public class KafkaStreamApp extends FlinkStreamModel {
+public class KafkaApp extends FlinkStreamModel {
     public static void main(String[] args) throws Exception {
         String inTopic = "test";
         String outTopic = "test1";

@@ -11,7 +11,8 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import java.util.List;
 
 /**
- * todo IDEA启动main方法时 需要勾选IDE的provided选项 增加-local local到启动参数
+ * flink stream demo
+ * todo IDEA run main方法时 need [add IDEA provided选项 ] AND [add -local local to program argument]
  *
  * @author zhangxuecheng4441
  * @date 2023/2/22/022 11:43

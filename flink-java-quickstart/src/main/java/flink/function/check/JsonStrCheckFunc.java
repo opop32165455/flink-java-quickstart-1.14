@@ -31,10 +31,9 @@ public class JsonStrCheckFunc<T> extends ProcessFunction<String, T> {
 
             T element = JSONUtil.toBean(value, tClass);
 
-            //todo check
+            //todo field check
             out.collect(element);
         } catch (Exception e) {
-            log.error("error:{} and error data:{}", e.getMessage(), value, e);
             //旁路数据
             ctx.output(new OutputTag<>(errorTag, TypeInformation.of(String.class)), e.getMessage() + CharUtil.COLON + value);
         }

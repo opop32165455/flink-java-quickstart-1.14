@@ -59,7 +59,7 @@ public class FlinkStreamModel implements FlinkModel {
                 .setParallelism(parallelism)
                 .build();
 
-        //todo debug IDEA测试开启 http://localhost:8081/ 研发环境
+        //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
         if (params.has(LOCAL_ENV_PARAM)) {
             env = StreamContextEnvironment.createLocalEnvironmentWithWebUI(new Configuration());
         }
@@ -72,6 +72,7 @@ public class FlinkStreamModel implements FlinkModel {
         ParameterTool parameterTool = FlinkModel.getInitConfig(envConf);
 
         config = parameterTool.toMap();
+
         // make parameters available in the web interface
         env.getConfig().setGlobalJobParameters(parameterTool);
 

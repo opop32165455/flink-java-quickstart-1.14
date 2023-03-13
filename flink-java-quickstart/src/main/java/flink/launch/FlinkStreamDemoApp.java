@@ -1,53 +1,71 @@
 package flink.launch;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import flink.model.FlinkStreamModel;
-import flink.source.KafkaGenericSource;
+import flink.sink.GenericSink;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
-import org.apache.flink.connector.kafka.source.KafkaSource;
+import org.apache.flink.streaming.api.functions.source.SourceFunction;
+
+import java.util.List;
 
 /**
- * 重点人员写入Es
- * com.surfilter.kf.etl.launch.PersonnelKafka2EsApp
- * -env dev
+ * todo IDEA启动main方法时 需要勾选IDE的provided选项 增加-local local到启动参数
  *
  * @author zhangxuecheng4441
  * @date 2023/2/22/022 11:43
  */
-public class FlinkStreamDemoApp extends FlinkStreamModel{
+@Slf4j
+public class FlinkStreamDemoApp extends FlinkStreamModel {
 
 
     /**
      * idea 启动需要配置 [add dependencies with "provided"]
+     *
      * @param args args
      * @throws Exception Exception
      */
     public static void main(String[] args) throws Exception {
-        consumeKafka(args);
+        initEnv(args);
+
+        //获取数据源
+        val source = env.addSource(new SourceFunction<String>() {
+            boolean out = true;
+
+            @Override
+            public void run(SourceContext<String> sourceContext) throws Exception {
+                while (out) {
+                    ThreadUtil.sleep(1.2 * 1000);
+                    val str = "print-time:" + DateUtil.now();
+                    log.warn("add string:{}", str);
+                    sourceContext.collect(str);
+                }
+            }
+
+            @Override
+            public void cancel() {
+                out = false;
+            }
+        }).setParallelism(1).name("string-source");
+
+        //打印
+        source.print().setParallelism(2).name("print-time");
+
+        //每5个数据进行一次数据输出
+        source.addSink(new GenericSink<String>(5) {
+            @Override
+            public void flush(List<String> elements) {
+                log.error("output str:{}", elements);
+            }
+        });
+
+        //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
+        env.execute("DemoStreamApp");
     }
 
-    private static void consumeKafka(String[] args) throws Exception {
-        String topic = "test";
-        String group = "test01";
 
-        val env = FlinkStreamModel.initEnv(args);
-
-        KafkaSource<String> source = KafkaGenericSource.<String>builder()
-                .topic(topic)
-                .group(group)
-                .schema(new SimpleStringSchema())
-                .build()
-                .createSource();
-
-        val kafkaSource = env.fromSource(source, WatermarkStrategy.noWatermarks(), "Consumer Topics:" + (topic) + " By Group: " + group);
-
-        kafkaSource.print();
-        env.execute();
-    }
-
-
-    void process(){
+    void process() {
         ////kafka ds
         //val kafkaSource = kafkaSource("test", "test01").setParallelism(2);
         //

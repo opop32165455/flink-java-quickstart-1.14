@@ -43,7 +43,7 @@ public class ExcelInputFormat extends GenericInputFormat<List<AccountUploadPojo>
         ExecutionConfig.GlobalJobParameters globalParams = context.getExecutionConfig().getGlobalJobParameters();
         val globalConf =  globalParams.toMap();
 
-        //从oss中获取web上传的文件 todo
+        //从oss中获取web上传的文件 todo 自定义
         ossHandle = null;
 
         //或取流

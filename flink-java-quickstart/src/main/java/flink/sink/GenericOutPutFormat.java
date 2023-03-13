@@ -2,6 +2,7 @@ package flink.sink;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.io.RichOutputFormat;
+import org.apache.flink.configuration.Configuration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,14 +23,25 @@ public abstract class GenericOutPutFormat<T> extends RichOutputFormat<T> {
     private final int batchInterval;
     private int batchCount = 0;
 
+    @Override
+    public void configure(Configuration parameters) {
+        //todo 执行一次 可以在此处 getRuntimeContext()获取全局配置
+    }
+
     public GenericOutPutFormat(int batchInterval) {
         this.batchInterval = batchInterval;
         dataCache = new ArrayList<>();
     }
 
-    @Override
-    public void open(int taskNumber, int numTasks) throws IOException {
+    public GenericOutPutFormat() {
+        this.batchInterval = 1000;
+        dataCache = new ArrayList<>();
+    }
 
+
+    @Override
+    public void open(int taskNumber, int numTasks) {
+        //todo 可以在此处获取配置
     }
 
 
@@ -40,7 +52,7 @@ public abstract class GenericOutPutFormat<T> extends RichOutputFormat<T> {
 
             ++this.batchCount;
             if (this.batchCount >= this.batchInterval) {
-                this.flush();
+                this.flush(dataCache);
                 dataCache.clear();
                 this.batchCount = 0;
             }
@@ -51,7 +63,7 @@ public abstract class GenericOutPutFormat<T> extends RichOutputFormat<T> {
     public void close() throws IOException {
         if (!this.dataCache.isEmpty()) {
             try {
-                this.flush();
+                this.flush(dataCache);
             } finally {
                 this.dataCache.clear();
             }
@@ -69,6 +81,8 @@ public abstract class GenericOutPutFormat<T> extends RichOutputFormat<T> {
 
     /**
      * 数据入库
+     *
+     * @param dataCache 数据
      */
-    public abstract void flush();
+    public abstract void flush(List<T> dataCache);
 }

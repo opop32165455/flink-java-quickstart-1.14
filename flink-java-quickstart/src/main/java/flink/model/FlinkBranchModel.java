@@ -38,7 +38,7 @@ public class FlinkBranchModel implements FlinkModel {
      * @return StreamExecutionEnvironment
      * @throws IOException IOException
      */
-    public static ExecutionEnvironment branchEnv(String[] args) throws IOException {
+    public static ExecutionEnvironment initEnv(String[] args) {
         //get params
         val params = MultipleParameterTool.fromArgs(args);
 

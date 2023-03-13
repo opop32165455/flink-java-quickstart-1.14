@@ -15,7 +15,7 @@ import org.apache.flink.connector.kafka.source.KafkaSource;
  * @author zhangxuecheng4441
  * @date 2023/2/22/022 11:43
  */
-public class KafkaStreamDemoApp extends FlinkStreamModel{
+public class FlinkStreamDemoApp extends FlinkStreamModel{
 
 
     /**

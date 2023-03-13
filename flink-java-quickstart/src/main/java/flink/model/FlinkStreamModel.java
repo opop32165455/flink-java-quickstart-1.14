@@ -46,7 +46,7 @@ public class FlinkStreamModel implements FlinkModel {
         param = params;
 
         long checkpointInterval = params.getLong("checkpointInterval", 120 * 1000);
-        int parallelism = params.getInt("parallelism", 4);
+        int parallelism = params.getInt("parallelism", 2);
         // set up the execution environment
         env = StreamEnvBuilder.builder()
                 .setCheckpointInterval(checkpointInterval)
@@ -58,6 +58,8 @@ public class FlinkStreamModel implements FlinkModel {
                 .setDefaultRestartStrategy(3, Time.of(3, TimeUnit.MINUTES), Time.of(2, TimeUnit.MINUTES))
                 .setParallelism(parallelism)
                 .build();
+        //netty buffer 传输超时
+        env.setBufferTimeout(1000);
 
         //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
         if (params.has(LOCAL_ENV_PARAM)) {

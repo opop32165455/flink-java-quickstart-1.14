@@ -1,6 +1,7 @@
 package flink.function.check;
 
 import cn.hutool.core.util.CharUtil;
+import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -24,15 +25,17 @@ public class JsonStrCheckFunc<T> extends ProcessFunction<String, T> {
     @Override
     public void processElement(String value, ProcessFunction<String, T>.Context ctx, Collector<T> out) throws Exception {
         try {
-            //if (!JSON.isValid(value)) {
-            //    throw new IllegalArgumentException("it is not a valid JSON. ");
-            //}
-            //T element = JSON.parseObject(value, tClass);
+            if (!JSONUtil.isTypeJSON(value)) {
+                throw new IllegalArgumentException("it is not a valid JSON. ");
+            }
+
+            T element = JSONUtil.toBean(value, tClass);
 
             //todo check
-            //out.collect(element);
+            out.collect(element);
         } catch (Exception e) {
             log.error("error:{} and error data:{}", e.getMessage(), value, e);
+            //旁路数据
             ctx.output(new OutputTag<>(errorTag, TypeInformation.of(String.class)), e.getMessage() + CharUtil.COLON + value);
         }
     }

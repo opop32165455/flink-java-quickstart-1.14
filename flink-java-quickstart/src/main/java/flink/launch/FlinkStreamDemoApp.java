@@ -58,44 +58,9 @@ public class FlinkStreamDemoApp extends FlinkStreamModel {
             public void flush(List<String> elements) {
                 log.error("output str:{}", elements);
             }
-        });
+        }).setParallelism(4).name("branch-sink");
 
         //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
         env.execute("DemoStreamApp");
-    }
-
-
-    void process() {
-        ////kafka ds
-        //val kafkaSource = kafkaSource("test", "test01").setParallelism(2);
-        //
-        ////json 字段解析
-        //val checkResultStream = kafkaSource.process(new JsonStrCheckFunc<>(PersonnelInfo.class, errorDataTag))
-        //        .returns(TypeInformation.of(PersonnelInfo.class)).setParallelism(1).name("Check Json Result");
-        //
-        //val personEsSink = EsSink.<PersonnelInfo>builder()
-        //        .esSinkFunc(new GenericEsFunc<>(index))
-        //        .config(config).build().getSink();
-        //
-        ////数据写es
-        //checkResultStream.addSink(personEsSink).setParallelism(4).name("Person Es Write");
-        //
-        //val errorSink = KafkaSink.<String>builder()
-        //        .setBootstrapServers(config.get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG))
-        //        .setRecordSerializer(
-        //                KafkaRecordSerializationSchema.builder()
-        //                        .setTopic(errorDataTag)
-        //                        .setValueSerializationSchema(new SimpleStringSchema())
-        //                        .build()
-        //        )
-        //        .setDeliverGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
-        //        //.setKafkaProducerConfig(KafkaUtil.defaultProducerProp())
-        //        .build();
-        //
-        ////脏数据写Kafka
-        //checkResultStream.getSideOutput(new OutputTag<>(errorDataTag,TypeInformation.of(String.class)))
-        //        .sinkTo(errorSink).setParallelism(2).name("Error Massage Sink");
-        //
-        //FlinkStreamModel.env.execute("Personnel Kafka Output Es");
     }
 }

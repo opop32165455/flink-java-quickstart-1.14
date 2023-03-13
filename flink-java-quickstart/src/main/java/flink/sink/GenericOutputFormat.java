@@ -15,7 +15,7 @@ import java.util.List;
  * @date 2023/2/20/020 15:04
  */
 @Slf4j
-public abstract class GenericOutPutFormat<T> extends RichOutputFormat<T> {
+public abstract class GenericOutputFormat<T> extends RichOutputFormat<T> {
     private static final long serialVersionUID = 3552174055171640294L;
 
     public final List<T> dataCache;
@@ -28,12 +28,12 @@ public abstract class GenericOutPutFormat<T> extends RichOutputFormat<T> {
         //todo 执行一次 可以在此处 getRuntimeContext()获取全局配置
     }
 
-    public GenericOutPutFormat(int batchInterval) {
+    public GenericOutputFormat(int batchInterval) {
         this.batchInterval = batchInterval;
         dataCache = new ArrayList<>();
     }
 
-    public GenericOutPutFormat() {
+    public GenericOutputFormat() {
         this.batchInterval = 1000;
         dataCache = new ArrayList<>();
     }

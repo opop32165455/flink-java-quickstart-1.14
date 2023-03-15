@@ -3,7 +3,7 @@ package flink.pojo;
 /**
  * Es写入对象规范
  * @author zhangxuecheng4441
- * @date 2023/2/24/024 17:24
+ * @date 2022/2/24/024 17:24
  */
 public interface EsDoc {
     /**

@@ -17,7 +17,7 @@ import org.apache.kafka.clients.consumer.OffsetResetStrategy;
  * todo IDEA run main方法时 need [add IDEA provided选项 ] AND [add -local local to program argument]
  *
  * @author zhangxuecheng4441
- * @date 2023/3/13/013 9:40
+ * @date 2022/3/13/013 9:40
  */
 public class KafkaApp extends FlinkStreamModel {
     public static void main(String[] args) throws Exception {

@@ -15,7 +15,7 @@ import java.util.List;
  * todo IDEA run main方法时 need [add IDEA provided选项 ] AND [add -local local to program argument]
  *
  * @author zhangxuecheng4441
- * @date 2023/2/22/022 11:43
+ * @date 2022/2/22/022 11:43
  */
 @Slf4j
 public class FlinkStreamDemoApp extends FlinkStreamModel {

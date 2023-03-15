@@ -7,7 +7,7 @@ import java.util.Properties;
 
 /**
  * @author zhangxuecheng4441
- * @date 2023/2/22/022 17:03
+ * @date 2022/2/22/022 17:03
  */
 public class KafkaUtil {
     /**

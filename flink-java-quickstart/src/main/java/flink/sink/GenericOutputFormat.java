@@ -12,7 +12,7 @@ import java.util.List;
  * 通用output模板
  *
  * @author zhangxuecheng4441
- * @date 2023/2/20/020 15:04
+ * @date 2022/2/20/020 15:04
  */
 @Slf4j
 public abstract class GenericOutputFormat<T> extends RichOutputFormat<T> {

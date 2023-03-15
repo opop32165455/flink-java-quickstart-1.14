@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 /**
  * @author zhangxuecheng4441
- * @date 2023/2/24/024 17:31
+ * @date 2022/2/24/024 17:31
  */
 public interface FlinkModel {
     String ENV_PARAM = "env";

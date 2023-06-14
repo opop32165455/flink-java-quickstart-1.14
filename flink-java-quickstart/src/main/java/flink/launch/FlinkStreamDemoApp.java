@@ -59,7 +59,7 @@ public class FlinkStreamDemoApp extends FlinkStreamModel {
             public void flush(List<String> elements) {
                 log.error("output str:{}", elements);
             }
-        }).setParallelism(4).name("branch-sink");
+        }).setParallelism(4).name("stream-sink");
 
         //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
         env.execute("DemoStreamApp");

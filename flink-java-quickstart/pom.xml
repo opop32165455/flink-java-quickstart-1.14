@@ -71,6 +71,13 @@
             <version>${flink.jdbc.version}</version>
         </dependency>
 
+        <!--rocksdb-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-statebackend-rocksdb_${scala.binary.version}</artifactId>
+            <version>${flink.jdbc.version}</version>
+        </dependency>
+
         <!--mysql-->
         <dependency>
             <groupId>mysql</groupId>

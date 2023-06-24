@@ -6,7 +6,7 @@ import cn.hutool.core.util.RandomUtil;
 import flink.function.check.JsonStrCheckFunc;
 import flink.model.FlinkStreamModel;
 import flink.pojo.AccountUploadPojo;
-import flink.sink.GenericSink;
+import flink.sink.GenericAbstractSink;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -60,7 +60,7 @@ public class ProcessApp extends FlinkStreamModel {
 
         //处理直接返回的数据
         process.map(String::valueOf)
-                .addSink(new GenericSink<String>(1) {
+                .addSink(new GenericAbstractSink<String>(1) {
                     @Override
                     public void flush(List<String> elements) {
                         log.warn(">>>>>> right str:{}", elements);
@@ -69,7 +69,7 @@ public class ProcessApp extends FlinkStreamModel {
 
         //获取名为errorTag流中的数据处理
         process.getSideOutput(new OutputTag<>(errorTag, TypeInformation.of(String.class)))
-                        .addSink(new GenericSink<String>(1) {
+                        .addSink(new GenericAbstractSink<String>(1) {
                             @Override
                             public void flush(List<String> elements) {
                                 log.error(">>>>>> error str:{}", elements);

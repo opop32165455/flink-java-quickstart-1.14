@@ -2,7 +2,7 @@ package flink.launch.branch;
 
 import cn.hutool.core.thread.ThreadUtil;
 import flink.model.FlinkBranchModel;
-import flink.sink.GenericOutputFormat;
+import flink.sink.GenericAbstractOutputFormat;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.flink.api.common.functions.CoGroupFunction;
@@ -87,7 +87,7 @@ public class CoGroupApp extends FlinkBranchModel {
                 .returns(TypeInformation.of(new TypeHint<Tuple2<Integer, List<Tuple2<String, Integer>>>>() {
                 }))
                 //输出
-                .output(new GenericOutputFormat<Tuple2<Integer, List<Tuple2<String, Integer>>>>() {
+                .output(new GenericAbstractOutputFormat<Tuple2<Integer, List<Tuple2<String, Integer>>>>() {
                     @Override
                     public void flush(List<Tuple2<Integer, List<Tuple2<String, Integer>>>> elements) {
                         ThreadUtil.sleep(1.1 * 1000);

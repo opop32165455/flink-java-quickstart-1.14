@@ -13,6 +13,10 @@ public interface FlinkModel {
     String ENV_PARAM = "env";
     String DEV_ENV = "dev";
     String LOCAL_ENV_PARAM = "local";
+    String DISABLE_OPERATOR_CHAINING = "disableOperatorChaining";
+    String CHECKPOINT_INTERVAL = "checkpointInterval";
+    String ROCKS_DB_PATH = "rocksDbPath";
+    String PARALLELISM = "parallelism";
 
     /**
      * 获取resource下配置

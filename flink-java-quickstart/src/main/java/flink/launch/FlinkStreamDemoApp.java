@@ -3,10 +3,14 @@ package flink.launch;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import flink.model.FlinkStreamModel;
-import flink.sink.GenericSink;
+import flink.sink.GenericAbstractSink;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import lombok.var;
+
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
+import org.apache.flink.streaming.api.functions.source.datagen.DataGeneratorSource;
 
 import java.util.List;
 
@@ -28,7 +32,7 @@ public class FlinkStreamDemoApp extends FlinkStreamModel {
      * @throws Exception Exception
      */
     public static void main(String[] args) throws Exception {
-        initEnv(args);
+        var env = initEnv(args);
 
         //获取数据源
         val source = env.addSource(new SourceFunction<String>() {
@@ -50,11 +54,15 @@ public class FlinkStreamDemoApp extends FlinkStreamModel {
             }
         }).setParallelism(1).name("string-source");
 
+        DataGeneratorSource<String> dataGeneratorSource = new DataGeneratorSource<String>(()->{return ""});
+
+        DataStreamSource<String> dataGeneratorDs = env.addSource(dataGeneratorSource);
+
         //打印
         source.print().setParallelism(2).name("print-time");
 
         //每5个数据进行一次数据输出
-        source.addSink(new GenericSink<String>(5) {
+        source.addSink(new GenericAbstractSink<String>(5) {
             @Override
             public void flush(List<String> elements) {
                 log.error("output str:{}", elements);
@@ -62,6 +70,6 @@ public class FlinkStreamDemoApp extends FlinkStreamModel {
         }).setParallelism(4).name("stream-sink");
 
         //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
-        env.execute("DemoStreamApp");
+        FlinkStreamModel.env.execute("DemoStreamApp");
     }
 }

@@ -36,7 +36,6 @@ public class FlinkBranchModel implements FlinkModel {
     /**
      * @param args params
      * @return StreamExecutionEnvironment
-     * @throws IOException IOException
      */
     public static ExecutionEnvironment initEnv(String[] args) {
         //get params

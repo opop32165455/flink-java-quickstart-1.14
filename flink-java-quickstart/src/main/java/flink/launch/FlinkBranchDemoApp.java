@@ -2,7 +2,7 @@ package flink.launch;
 
 import cn.hutool.core.thread.ThreadUtil;
 import flink.model.FlinkBranchModel;
-import flink.sink.GenericOutputFormat;
+import flink.sink.GenericAbstractOutputFormat;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.flink.api.common.io.GenericInputFormat;
@@ -54,7 +54,7 @@ public class FlinkBranchDemoApp extends FlinkBranchModel {
         }).setParallelism(1).name("string-source");
 
         //每获取5个数据输出一次数据
-        inputSource.output(new GenericOutputFormat<String>(5) {
+        inputSource.output(new GenericAbstractOutputFormat<String>(5) {
             @Override
             public void flush(List<String> elements) {
                 ThreadUtil.sleep(3.5 * 1000);

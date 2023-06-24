@@ -8,9 +8,11 @@ import org.apache.flink.api.java.utils.MultipleParameterTool;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.client.program.StreamContextEnvironment;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.contrib.streaming.state.RocksDBStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -40,13 +42,14 @@ public class FlinkStreamModel implements FlinkModel {
      * @param args params
      * @return StreamExecutionEnvironment
      */
-    public static StreamExecutionEnvironment initEnv(String[] args) {
+    public static StreamExecutionEnvironment initEnv(String[] args) throws IOException {
         //get params
         val params = MultipleParameterTool.fromArgs(args);
         param = params;
 
-        long checkpointInterval = params.getLong("checkpointInterval", 120 * 1000);
-        int parallelism = params.getInt("parallelism", 2);
+        long checkpointInterval = params.getLong(CHECKPOINT_INTERVAL, 120 * 1000);
+        String rocksDbPath = params.get(ROCKS_DB_PATH, "/data0/flink/rocksDb,/data1/flink/rocksDb");
+        int parallelism = params.getInt(PARALLELISM, 2);
         // set up the execution environment
         env = StreamEnvBuilder.builder()
                 .setCheckpointInterval(checkpointInterval)
@@ -58,8 +61,15 @@ public class FlinkStreamModel implements FlinkModel {
                 .setDefaultRestartStrategy(3, Time.of(3, TimeUnit.MINUTES), Time.of(2, TimeUnit.MINUTES))
                 .setParallelism(parallelism)
                 .build();
+
+        //关闭操作链
+        if (params.getBoolean(DISABLE_OPERATOR_CHAINING, false)) {
+            env.disableOperatorChaining();
+        }
         //netty buffer 传输超时
-        env.setBufferTimeout(1000);
+
+        //开启rocksDb 增量checkpoint
+        env.setStateBackend(new RocksDBStateBackend(rocksDbPath, true));
 
         //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
         if (params.has(LOCAL_ENV_PARAM)) {

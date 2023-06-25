@@ -54,10 +54,6 @@ public class FlinkStreamDemoApp extends FlinkStreamModel {
             }
         }).setParallelism(1).name("string-source");
 
-        DataGeneratorSource<String> dataGeneratorSource = new DataGeneratorSource<String>(()->{return ""});
-
-        DataStreamSource<String> dataGeneratorDs = env.addSource(dataGeneratorSource);
-
         //打印
         source.print().setParallelism(2).name("print-time");
 

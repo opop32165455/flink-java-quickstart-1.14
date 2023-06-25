@@ -69,7 +69,9 @@ public class FlinkStreamModel implements FlinkModel {
         //netty buffer 传输超时
 
         //开启rocksDb 增量checkpoint
-        env.setStateBackend(new RocksDBStateBackend(rocksDbPath, true));
+        if (params.has(ROCKS_DB_PATH)) {
+            env.setStateBackend(new RocksDBStateBackend(rocksDbPath, true));
+        }
 
         //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
         if (params.has(LOCAL_ENV_PARAM)) {

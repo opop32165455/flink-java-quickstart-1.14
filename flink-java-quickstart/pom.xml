@@ -21,6 +21,7 @@
         <slf4j.version>1.7.36</slf4j.version>
         <hadoop.version>2.7.5</hadoop.version>
         <flink.jdbc.version>1.10.3</flink.jdbc.version>
+        <kafka.client.version>2.4.1</kafka.client.version>
         <hutool.version>5.8.12</hutool.version>
         <mysql.connector.version>5.1.47</mysql.connector.version>
         <lombok.version>1.18.20</lombok.version>
@@ -42,7 +43,6 @@
             <version>${flink.version}</version>
             <scope>provided</scope>
         </dependency>
-
 
         <!-- flink table dependence-->
         <dependency>
@@ -108,6 +108,21 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.connector.version}</version>
+        </dependency>
+
+
+        <!-- Kafka Clients -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.client.version}</version>
+        </dependency>
+
+        <!-- flink table json format -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-json</artifactId>
+            <version>${flink.version}</version>
         </dependency>
 
         <!--lombok 需要安装lombok IDEA插件-->

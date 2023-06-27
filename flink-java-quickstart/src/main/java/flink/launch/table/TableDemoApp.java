@@ -1,6 +1,7 @@
 package flink.launch.table;
 
 import flink.model.FlinkStreamModel;
+import flink.source.TestDataGeneratorSource;
 import lombok.val;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.flink.api.common.functions.RuntimeContext;
@@ -13,6 +14,7 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.functions.source.datagen.DataGenerator;
 import org.apache.flink.streaming.api.functions.source.datagen.DataGeneratorSource;
 import org.apache.flink.table.api.DataTypes;
+import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Schema;
 import org.apache.flink.table.api.TableDescriptor;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
@@ -32,26 +34,14 @@ public class TableDemoApp extends FlinkStreamModel {
     public static void main(String[] args) throws Exception {
         val env = initEnv(args);
 
-        val tableEnv = StreamTableEnvironment.create(env);
+        val tableEnvSettings = EnvironmentSettings
+                .newInstance()
+                .inStreamingMode()
+                .build();
 
-        val generatorDs = FlinkStreamModel.env.addSource(new DataGeneratorSource<>(new DataGenerator<Tuple2<String, Integer>>() {
-                    RandomDataGenerator generator;
+        val tableEnv = StreamTableEnvironment.create(env,tableEnvSettings);
 
-                    @Override
-                    public void open(String s, FunctionInitializationContext functionInitializationContext, RuntimeContext runtimeContext) throws Exception {
-                        generator = new RandomDataGenerator();
-                    }
-
-                    @Override
-                    public boolean hasNext() {
-                        return true;
-                    }
-
-                    @Override
-                    public Tuple2<String, Integer> next() {
-                        return Tuple2.of(generator.nextHexString(10), generator.nextInt(1, 50));
-                    }
-                }, 5L, 1000L))
+        val generatorDs = FlinkStreamModel.env.addSource(new TestDataGeneratorSource(5,1000))
                 .returns(TypeInformation.of(new TypeHint<Tuple2<String, Integer>>() {
                 }));
 

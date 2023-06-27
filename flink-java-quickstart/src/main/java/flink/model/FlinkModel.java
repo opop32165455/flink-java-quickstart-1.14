@@ -1,9 +1,15 @@
 package flink.model;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.stream.StreamUtil;
+import cn.hutool.core.util.StrUtil;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.util.FileUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  * @author zhangxuecheng4441
@@ -33,5 +39,22 @@ public interface FlinkModel {
             throw new RuntimeException(e);
         }
         return parameterTool;
+    }
+
+
+    /**
+     * 获取resource下配置
+     *
+     * @param resourcePath Resource Path
+     * @return ParameterTool
+     */
+    static String getResourceStr(String resourcePath) {
+        try {
+            InputStream resourceAsStream = FlinkStreamModel.class.getResourceAsStream("/" + resourcePath);
+            return IoUtil.read(resourceAsStream, Charset.defaultCharset());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

@@ -1,11 +1,7 @@
 package flink.model;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.stream.StreamUtil;
-import cn.hutool.core.util.StrUtil;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.util.FileUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

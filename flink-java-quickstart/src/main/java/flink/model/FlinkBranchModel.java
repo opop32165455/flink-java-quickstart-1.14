@@ -7,7 +7,6 @@ import org.apache.flink.api.java.utils.MultipleParameterTool;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**

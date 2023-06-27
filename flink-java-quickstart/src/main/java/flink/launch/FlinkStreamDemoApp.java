@@ -7,10 +7,7 @@ import flink.sink.GenericAbstractSink;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
-
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import org.apache.flink.streaming.api.functions.source.datagen.DataGeneratorSource;
 
 import java.util.List;
 

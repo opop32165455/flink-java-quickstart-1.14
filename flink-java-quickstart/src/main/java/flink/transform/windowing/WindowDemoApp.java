@@ -1,4 +1,4 @@
-package flink.windowing;
+package flink.transform.windowing;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author zhangxuecheng
- * @package flink.windowing
+ * @package flink.transform.windowing
  * @className WindowDemoApp
  * @description window demo
  * @date 2023/6/26 9:40

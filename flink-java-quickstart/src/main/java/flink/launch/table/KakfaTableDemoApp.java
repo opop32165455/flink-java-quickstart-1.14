@@ -28,17 +28,13 @@ public class KakfaTableDemoApp extends FlinkStreamModel {
 
     private static void sqlConnect(StreamTableEnvironment tableEnv) {
         // 将输入流注册为表
-        tableEnv.executeSql("CREATE TABLE structTable (" +
-                "  description STRING," +
-                "  title STRING," +
-                "  type STRING" +
-                ") WITH (" +
-                "  'connector' = 'kafka'," +
-                "  'topic' = 'mes_sajet_table_struct'," +
-                "  'properties.bootstrap.servers' = 'node-123:9092,node-124:9092,node-125:9092'," +
-                "  'properties.group.id' = 'test_group_0625-1420-2'," +
-                "  'scan.startup.mode' = 'earliest-offset'," +
-                "  'format' = 'json'" +
-                ")");
+        tableEnv.executeSql("CREATE TABLE ODS_MES_G_QC_SN_DEFECT (\n" +
+                "  after ROW<QC_LOTNO STRING, SERIAL_NUMBER STRING, QC_CNT INT, DEFECT_ID INT, DEFECT_LEVEL STRING, LOCATION STRING, DEFECT_QTY INT, ITEM_TYPE_ID STRING>) " +
+                " WITH (  'connector' = 'kafka',  'topic' = 'ODS_MES_G_QC_SN_DEFECT',  " +
+                "'properties.bootstrap.servers' = 'node-123:9092,node-124:9092,node-125:9092', " +
+                " 'properties.group.id' = 'DwdGsnDefectApp-consumer1687948168155', " +
+                " 'scan.startup.mode' = 'earliest-offset'," +
+                "'json.fail-on-missing-field' = 'false', " +
+                " 'format' = 'json') where DEFECT_ID =1");
     }
 }

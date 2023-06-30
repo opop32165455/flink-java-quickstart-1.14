@@ -3,7 +3,7 @@ package flink.launch;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import flink.model.FlinkStreamModel;
-import flink.sink.GenericAbstractSink;
+import flink.sink.GenericAbstractBranchSink;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
@@ -55,7 +55,7 @@ public class FlinkStreamDemoApp extends FlinkStreamModel {
         source.print().setParallelism(2).name("print-time");
 
         //每5个数据进行一次数据输出
-        source.addSink(new GenericAbstractSink<String>(5) {
+        source.addSink(new GenericAbstractBranchSink<String>(5) {
             @Override
             public void flush(List<String> elements) {
                 log.error("output str:{}", elements);

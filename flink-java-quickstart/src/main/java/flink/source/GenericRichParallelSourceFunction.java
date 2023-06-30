@@ -1,6 +1,7 @@
 package flink.source;
 
 import cn.hutool.core.thread.ThreadUtil;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.flink.api.common.functions.IterationRuntimeContext;
@@ -12,22 +13,30 @@ import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunctio
  * @author zhangxuecheng
  * @package flink.source
  * @className GenericRichParallelSourceFunction
- * @description Parallel Source Function
+ * @description 有限数据 一直不停止
  * @date 2023/6/25 11:43
  */
 @Slf4j
+@NoArgsConstructor
 public abstract class GenericRichParallelSourceFunction<T> extends RichParallelSourceFunction<T> {
 
     public RandomDataGenerator generator;
     public boolean isRunning = false;
+    public int rowLimit;
+    public int rowCount = 0;
+
+    public GenericRichParallelSourceFunction(int rowLimit) {
+        this.rowLimit = rowLimit;
+    }
 
     @Override
     public void run(SourceContext<T> ctx) throws Exception {
         while (isRunning) {
-            int attemptNumber = getRuntimeContext().getAttemptNumber();
-            log.info("AttemptNumber is {}", attemptNumber);
             ThreadUtil.sleep(1000L);
-            ctx.collect(createData());
+            if (rowCount < rowLimit) {
+                ctx.collect(createData());
+                rowCount++;
+            }
         }
     }
 

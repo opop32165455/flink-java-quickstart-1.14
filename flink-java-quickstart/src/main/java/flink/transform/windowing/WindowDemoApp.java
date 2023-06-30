@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import flink.model.FlinkStreamModel;
-import flink.sink.GenericAbstractSink;
+import flink.sink.GenericAbstractBranchSink;
 import flink.source.TestDataGeneratorSource;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -68,7 +68,7 @@ public class WindowDemoApp extends FlinkStreamModel {
                     }
                 })
 
-                .addSink(new GenericAbstractSink<Map<String, List<String>>>(1) {
+                .addSink(new GenericAbstractBranchSink<Map<String, List<String>>>(1) {
                     @Override
                     public void flush(List<Map<String, List<String>>> elements) {
                         log.warn(">>>>>> print log :{}", elements);

@@ -10,9 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.state.State;
+import org.apache.flink.api.common.state.ValueState;
+import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.EventTimeTrigger;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
@@ -53,16 +58,38 @@ public class WindowDemoApp extends FlinkStreamModel {
                 .keyBy(tuple -> tuple.f1)
                 //todo sliding滑动  Tumbling滚动 根据业务情况 使用Event Process time
                 //.window(SlidingProcessingTimeWindows.of(Time.seconds(5), Time.seconds(2)))
-                .window(SlidingEventTimeWindows.of(Time.seconds(5), Time.seconds(2)))
+                .window(TumblingEventTimeWindows.of(Time.seconds(5), Time.seconds(2)))
                 .trigger(EventTimeTrigger.create())
                 .process(new ProcessWindowFunction<Tuple3<String, Integer, Date>, Map<String, List<String>>, Integer, TimeWindow>() {
+
+                    private transient ValueState<Long> longState;
+
+
+                    @Override
+                    public void open(Configuration parameters) throws Exception {
+                        super.open(parameters);
+                        //上一次触发时间
+                        ValueStateDescriptor<Long> lastTriggerTimeDescriptor = new ValueStateDescriptor<>("lastTriggerTime", Long.class);
+
+                        longState = getRuntimeContext().getState(lastTriggerTimeDescriptor);
+                    }
+
                     @Override
                     public void process(Integer key, ProcessWindowFunction<Tuple3<String, Integer, Date>, Map<String, List<String>>, Integer, TimeWindow>.Context context, Iterable<Tuple3<String, Integer, Date>> elements, Collector<Map<String, List<String>>> out) throws Exception {
                         List<String> nameList = CollUtil.newArrayList(elements)
                                 .stream()
-                                .map(tuple -> tuple.f0 + "-" + DateUtil.second(tuple.f2))
+                                .map(tuple -> tuple.f0 + "-" + DateUtil.date(tuple.f2))
                                 .map(String::valueOf)
                                 .collect(Collectors.toList());
+                        if (longState.value() == null) {
+                            longState.update(1L);
+                            log.info("key:{} >>>>>> change long 0----->1", key);
+                        } else {
+                            Long value = longState.value();
+                            long update = value + nameList.size();
+                            longState.update(update);
+                            log.info("key:{} >>>>>> change long {}----->{}", key, value, update);
+                        }
 
                         out.collect(MapUtil.of(String.valueOf(key), nameList));
                     }

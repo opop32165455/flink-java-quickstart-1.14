@@ -38,6 +38,8 @@ public class FlinkStreamModel implements FlinkModel {
      */
     public static Map<String, String> config;
 
+    public final static boolean IS_TEST = true;
+
     /**
      * @param args params
      * @return StreamExecutionEnvironment
@@ -63,7 +65,7 @@ public class FlinkStreamModel implements FlinkModel {
                 .build();
 
         //关闭操作链
-        if (params.getBoolean(DISABLE_OPERATOR_CHAINING, false)) {
+        if (params.getBoolean(DISABLE_OPERATOR_CHAINING, false) || IS_TEST) {
             env.disableOperatorChaining();
         }
         //netty buffer 传输超时
@@ -74,7 +76,7 @@ public class FlinkStreamModel implements FlinkModel {
         }
 
         //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
-        if (params.has(LOCAL_ENV_PARAM)) {
+        if (params.has(LOCAL_ENV_PARAM)|| IS_TEST) {
             env = StreamContextEnvironment.createLocalEnvironmentWithWebUI(new Configuration());
         }
 

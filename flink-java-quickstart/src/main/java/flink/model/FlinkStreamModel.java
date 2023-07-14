@@ -38,7 +38,6 @@ public class FlinkStreamModel implements FlinkModel {
      */
     public static Map<String, String> config;
 
-    public final static boolean IS_TEST = true;
 
     /**
      * @param args params
@@ -62,10 +61,13 @@ public class FlinkStreamModel implements FlinkModel {
                 .setMaxConcurrentCheckpoints(1)
                 .setDefaultRestartStrategy(3, Time.of(3, TimeUnit.MINUTES), Time.of(2, TimeUnit.MINUTES))
                 .setParallelism(parallelism)
+
                 .build();
 
+        boolean isTest = params.has(LOCAL_ENV_PARAM);
+
         //关闭操作链
-        if (params.getBoolean(DISABLE_OPERATOR_CHAINING, false) || IS_TEST) {
+        if (isTest) {
             env.disableOperatorChaining();
         }
         //netty buffer 传输超时
@@ -76,7 +78,7 @@ public class FlinkStreamModel implements FlinkModel {
         }
 
         //todo debug 增加参数 -local local 可以IDEA测试开启 http://localhost:8081/ 研发环境
-        if (params.has(LOCAL_ENV_PARAM)|| IS_TEST) {
+        if (isTest) {
             env = StreamContextEnvironment.createLocalEnvironmentWithWebUI(new Configuration());
         }
 

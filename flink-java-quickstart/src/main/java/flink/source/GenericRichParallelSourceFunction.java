@@ -31,8 +31,13 @@ public abstract class GenericRichParallelSourceFunction<T> extends RichParallelS
 
     @Override
     public void run(SourceContext<T> ctx) throws Exception {
+
         while (isRunning) {
-            ThreadUtil.sleep(1000L);
+            if (rowCount % 3 == 1) {
+                ThreadUtil.sleep(20 * 1000L);
+            } else {
+                ThreadUtil.sleep(0.4 * 1000L);
+            }
             if (rowCount < rowLimit) {
                 ctx.collect(createData());
                 rowCount++;

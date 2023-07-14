@@ -15,6 +15,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <flink.version>1.14.5</flink.version>
+        <hadoop.version>3.1.3</hadoop.version>
         <scala.binary.version>2.12</scala.binary.version>
         <target.java.version>1.8</target.java.version>
         <scala.version>2.12.15</scala.version>
@@ -68,6 +69,22 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- flink table json format -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-json</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--rocksdb-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-statebackend-rocksdb_${scala.binary.version}</artifactId>
+            <version>${flink.jdbc.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!--工具包-->
         <dependency>
             <groupId>cn.hutool</groupId>
@@ -96,13 +113,6 @@
             <version>${flink.jdbc.version}</version>
         </dependency>
 
-        <!--rocksdb-->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-statebackend-rocksdb_${scala.binary.version}</artifactId>
-            <version>${flink.jdbc.version}</version>
-        </dependency>
-
         <!--mysql-->
         <dependency>
             <groupId>mysql</groupId>
@@ -118,12 +128,6 @@
             <version>${kafka.client.version}</version>
         </dependency>
 
-        <!-- flink table json format -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-json</artifactId>
-            <version>${flink.version}</version>
-        </dependency>
 
         <!--lombok 需要安装lombok IDEA插件-->
         <dependency>
@@ -137,11 +141,20 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--如果保存检查点到hdfs上，需要引入此依赖-->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
         </dependency>
     </dependencies>
 

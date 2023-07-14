@@ -56,10 +56,11 @@ public class ProcessApp extends FlinkStreamModel {
         //分流 判断json直接返回 非json添加到名为errorTag的流中
         val process = source.process(new JsonStrCheckFunc<>(AccountUploadPojo.class, errorTag))
                 .returns(TypeInformation.of(AccountUploadPojo.class))
-                .setParallelism(2).name("json-parse");
+                .setParallelism(1).name("json-parse");
 
         //处理直接返回的数据
         process.map(String::valueOf)
+                .setParallelism(1)
                 .addSink(new GenericAbstractBranchSink<String>(1) {
                     @Override
                     public void flush(List<String> elements) {

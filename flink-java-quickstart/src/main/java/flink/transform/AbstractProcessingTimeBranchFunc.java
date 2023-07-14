@@ -72,6 +72,7 @@ public abstract class AbstractProcessingTimeBranchFunc<K, IN, OUT> extends Keyed
         long tolerateTime = 100L;
         log.info(">>>>>>>> time offset {}ms",timeOffset);
         if (timeOffset >= bufferTimeoutSec * 1000L - tolerateTime) {
+            log.error(">>>>>>>> time offset processBuffer {}ms",timeOffset);
             // 处理剩余的批次数据
             processBuffer(key, out);
             timeState.update(timerService.currentProcessingTime());

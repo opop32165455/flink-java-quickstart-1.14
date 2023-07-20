@@ -14,7 +14,7 @@ import java.util.List;
  * 可以通过重写branchTransform修改逻辑
  *
  * @author zhangxuecheng
- * @package flink.transform.windowing
+ * @package flink.launch.stream.windowing
  * @className BranchProcessFunc
  * @description 数据攒批处理
  * @date 2023/6/29 17:47

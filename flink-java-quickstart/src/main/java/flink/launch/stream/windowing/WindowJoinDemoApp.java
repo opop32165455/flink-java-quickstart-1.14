@@ -1,7 +1,6 @@
-package flink.transform.windowing;
+package flink.launch.stream.windowing;
 
 import flink.model.FlinkStreamModel;
-import flink.sink.GenericAbstractBranchSink;
 import flink.source.TestDataGeneratorSource;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,11 +18,10 @@ import org.apache.flink.util.Collector;
 
 import java.time.Duration;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author zhangxuecheng
- * @package flink.transform.windowing
+ * @package flink.launch.stream.windowing
  * @className WindowDemoApp
  * @description window demo
  * @date 2023/6/26 9:40

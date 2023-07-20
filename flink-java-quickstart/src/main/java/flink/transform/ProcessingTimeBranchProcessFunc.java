@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * @author zhangxuecheng
- * @package flink.transform.windowing
+ * @package flink.launch.stream.windowing
  * @className BranchProcessFunc
  * @description 以ProcessingTime作为时间依据 数据攒批处理
  * @date 2023/6/29 17:47

@@ -1,39 +1,27 @@
-package flink.transform.broadcast;
+package flink.launch.stream.broadcast;
 
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.RandomUtil;
 import flink.model.FlinkStreamModel;
 import flink.source.DateGenUtil;
-import flink.source.TestDataGeneratorSource;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
-import org.apache.commons.math3.random.RandomDataGenerator;
-import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.runtime.state.KeyedStateFunction;
 import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction;
-import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-import org.apache.flink.table.planner.expressions.In;
 import org.apache.flink.util.Collector;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * @author zhangxuecheng
- * @package flink.transform.broadcast
+ * @package flink.launch.stream.broadcast
  * @className BroadcastStateDemoApp
  * @description BroadcastState Demo
  * @date 2023/7/10 10:17

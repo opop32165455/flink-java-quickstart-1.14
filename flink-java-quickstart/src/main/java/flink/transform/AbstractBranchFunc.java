@@ -1,17 +1,15 @@
 package flink.transform;
 
 import cn.hutool.core.date.DateUtil;
+import flink.pojo.UniqueBean;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
-import org.apache.flink.api.common.state.ListState;
-import org.apache.flink.api.common.state.ListStateDescriptor;
-import org.apache.flink.api.common.state.ValueState;
-import org.apache.flink.api.common.state.ValueStateDescriptor;
+import org.apache.flink.api.common.state.*;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.TimerService;
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
+import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.util.Collector;
 
 import java.io.IOException;
@@ -31,15 +29,15 @@ import java.util.List;
  * @date 2023/6/29 17:47
  */
 @Slf4j
-public abstract class AbstractProcessingTimeBranchFunc<K, IN, OUT> extends KeyedProcessFunction<K, IN, OUT> {
+public abstract class AbstractBranchFunc<IN extends UniqueBean, OUT> extends ProcessFunction<IN, OUT> {
     private static final long serialVersionUID = -2053123841723352389L;
     private final int maxBufferSize;
     private final int bufferTimeoutSec;
-    private transient ListState<IN> buffer;
+    private transient MapState<String, IN> buffer;
     private transient ValueState<Long> timeState;
     private final TypeInformation<IN> typeInfo;
 
-    public AbstractProcessingTimeBranchFunc(int maxBufferSize, int bufferTimeoutSec, TypeInformation<IN> typeInfo) {
+    public AbstractBranchFunc(int maxBufferSize, int bufferTimeoutSec, TypeInformation<IN> typeInfo) {
         this.bufferTimeoutSec = bufferTimeoutSec;
         this.maxBufferSize = maxBufferSize;
         this.typeInfo = typeInfo;
@@ -49,9 +47,10 @@ public abstract class AbstractProcessingTimeBranchFunc<K, IN, OUT> extends Keyed
     public void open(Configuration parameters) {
         val runtimeContext = getRuntimeContext();
 
+
         //branch buffer
-        ListStateDescriptor<IN> batchStateDescriptor = new ListStateDescriptor<>("batchState", typeInfo);
-        buffer = runtimeContext.getListState(batchStateDescriptor);
+        MapStateDescriptor<String, IN> batchState = new MapStateDescriptor<>("batchState", TypeInformation.of(String.class), typeInfo);
+        buffer = runtimeContext.getMapState(batchState);
 
         //上一次触发时间
         ValueStateDescriptor<Long> lastTriggerTimeDescriptor = new ValueStateDescriptor<>("lastTriggerTime", Long.class);
@@ -62,44 +61,40 @@ public abstract class AbstractProcessingTimeBranchFunc<K, IN, OUT> extends Keyed
     }
 
     @Override
-    public void onTimer(long timestamp, KeyedProcessFunction<K, IN, OUT>.OnTimerContext ctx, Collector<OUT> out) throws Exception {
+    public void onTimer(long timestamp, ProcessFunction<IN, OUT>.OnTimerContext ctx, Collector<OUT> out) throws Exception {
         var timerService = ctx.timerService();
-        K key = ctx.getCurrentKey();
+
         long timeOffset = timerService.currentProcessingTime() - timeState.value();
-        log.info(">>>>>>>> time check {} - {}", DateUtil.date(timerService.currentProcessingTime()),DateUtil.date(timeState.value()));
 
         //允许时间上有0.1s误差
         long tolerateTime = 100L;
-        log.info(">>>>>>>> time offset {}ms",timeOffset);
         if (timeOffset >= bufferTimeoutSec * 1000L - tolerateTime) {
-            log.error(">>>>>>>> time offset processBuffer {}ms",timeOffset);
+            log.info("Data has been processed since the last time {}ms", timeOffset);
             // 处理剩余的批次数据
-            processBuffer(key, out);
+            processBuffer(out);
             timeState.update(timerService.currentProcessingTime());
         }
     }
 
-
     @Override
-    public void processElement(IN value, KeyedProcessFunction<K, IN, OUT>.Context ctx, Collector<OUT> out) throws Exception {
+    public void processElement(IN value, ProcessFunction<IN, OUT>.Context ctx, Collector<OUT> out) throws Exception {
         //初始化时间
         initTimeState(ctx);
-
-        val key = ctx.getCurrentKey();
 
         //设置这个数据最晚要被处理的时间
         setNextExecuteTime(ctx.timerService());
 
         //添加数据到批次状态
-        buffer.add(value);
+        buffer.put(value.uniqueKey(), value);
 
         // 当批次大小达到阈值或距离上一次处理时间超过阈值时，触发处理
-        if (buffer.get().spliterator().getExactSizeIfKnown() >= maxBufferSize) {
+        if (buffer.values().spliterator().getExactSizeIfKnown() >= maxBufferSize) {
             // 处理批次数据
-            processBuffer(key, out);
+            processBuffer(out);
             timeState.update(ctx.timerService().currentProcessingTime());
         }
     }
+
 
     /**
      * 设置time state初始值
@@ -109,7 +104,7 @@ public abstract class AbstractProcessingTimeBranchFunc<K, IN, OUT> extends Keyed
      */
     private void initTimeState(Context context) throws IOException {
         if (timeState.value() == null) {
-            log.info("check init time:{}",DateUtil.date(context.timerService().currentProcessingTime()));
+            log.info("check init time:{}", DateUtil.date(context.timerService().currentProcessingTime()));
             timeState.update(context.timerService().currentProcessingTime());
         }
     }
@@ -120,15 +115,15 @@ public abstract class AbstractProcessingTimeBranchFunc<K, IN, OUT> extends Keyed
      * @param out buffer数据操作
      * @throws Exception Exception
      */
-    private void processBuffer(K key, Collector<OUT> out) throws Exception {
+    private void processBuffer(Collector<OUT> out) throws Exception {
         //定时器OnTime 和 攒批处理processElement 是顺序执行 不会有并发问题 不需要加锁
         List<IN> batchData = new ArrayList<>();
-        for (IN item : buffer.get()) {
+        for (IN item : buffer.values()) {
             batchData.add(item);
         }
 
         if (!batchData.isEmpty()) {
-            branchTransform(out, key, batchData);
+            branchTransform(out, batchData);
         }
         // 清空批次状态
         buffer.clear();
@@ -141,7 +136,7 @@ public abstract class AbstractProcessingTimeBranchFunc<K, IN, OUT> extends Keyed
      * @param out       Collector
      * @param batchData batchData
      */
-    public abstract void branchTransform(Collector<OUT> out, K key, List<IN> batchData);
+    public abstract void branchTransform(Collector<OUT> out, List<IN> batchData);
 
 
     /**

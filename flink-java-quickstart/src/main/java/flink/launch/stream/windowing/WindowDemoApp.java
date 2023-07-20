@@ -1,4 +1,4 @@
-package flink.transform.windowing;
+package flink.launch.stream.windowing;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
@@ -10,13 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.state.State;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
-import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.EventTimeTrigger;
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author zhangxuecheng
- * @package flink.transform.windowing
+ * @package flink.launch.stream.windowing
  * @className WindowDemoApp
  * @description window demo
  * @date 2023/6/26 9:40

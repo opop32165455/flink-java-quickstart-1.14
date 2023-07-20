@@ -1,8 +1,5 @@
-package flink.transform.windowing;
+package flink.launch.stream.windowing;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.map.MapUtil;
 import flink.model.FlinkStreamModel;
 import flink.sink.GenericAbstractBranchSink;
 import flink.source.TestDataGeneratorSource;
@@ -12,7 +9,6 @@ import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFunction;
-import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.EventTimeTrigger;
@@ -22,12 +18,10 @@ import org.apache.flink.util.Collector;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author zhangxuecheng
- * @package flink.transform.windowing
+ * @package flink.launch.stream.windowing
  * @className WindowDemoApp
  * @description window demo
  * @date 2023/6/26 9:40

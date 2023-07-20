@@ -41,7 +41,7 @@ public class ProcessApp extends FlinkStreamModel {
                 while (out) {
                     ThreadUtil.sleep(1.2 * 1000);
                     val str = strList.get(RandomUtil.randomInt(0, 3));
-                    log.warn("add string:{}", str);
+                    log.info("add string:{}", str);
                     sourceContext.collect(str);
                 }
             }
@@ -51,6 +51,9 @@ public class ProcessApp extends FlinkStreamModel {
                 out = false;
             }
         }).setParallelism(1).name("string-source");
+
+        source.print();
+
 
 
         //分流 判断json直接返回 非json添加到名为errorTag的流中
@@ -70,12 +73,12 @@ public class ProcessApp extends FlinkStreamModel {
 
         //获取名为errorTag流中的数据处理
         process.getSideOutput(new OutputTag<>(errorTag, TypeInformation.of(String.class)))
-                        .addSink(new GenericAbstractBranchSink<String>(1) {
-                            @Override
-                            public void flush(List<String> elements) {
-                                log.error(">>>>>> error str:{}", elements);
-                            }
-                        }).setParallelism(1).name("error-sink");
+                .addSink(new GenericAbstractBranchSink<String>(1) {
+                    @Override
+                    public void flush(List<String> elements) {
+                        log.error(">>>>>> error str:{}", elements);
+                    }
+                }).setParallelism(1).name("error-sink");
 
         env.execute("ProcessApp");
     }
